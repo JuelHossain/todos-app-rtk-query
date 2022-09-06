@@ -55,12 +55,17 @@ function ColorFilter() {
 }
 
 function States() {
-  const filter = useSelector((state) => state.filter);
-  const { data: todos, isLoading } = useGetTodosQuery(filter);
+  const { data: incompleteTodos, isLoading } = useGetTodosQuery({
+    status: "Incompleted",
+  });
 
   return (
     <div className="flex gap-2">
-      <p>{isLoading ? "Loading..." : numberOfTodos(todos?.length)}</p>
+      <p>
+        {isLoading
+          ? "Loading..."
+          : numberOfTodos(incompleteTodos?.length, "Incomplete")}
+      </p>
     </div>
   );
 }
