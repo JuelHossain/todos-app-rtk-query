@@ -18,13 +18,6 @@ export const apiSlice = createApi({
       },
       providesTags: ["todos"],
     }),
-    getTodo: query({
-      query: (id) => `todos/${id}`,
-      providesTags: (params) => {
-        console.log(params);
-        return [{ type: "todo", id: params.arg.id }];
-      },
-    }),
     addTodo: mutation({
       query: (text) => ({
         url: "todos",
