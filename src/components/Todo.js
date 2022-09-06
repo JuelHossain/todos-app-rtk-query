@@ -1,38 +1,17 @@
-import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useState } from "react";
 import cancelImage from "../assets/images/cancel.png";
-import deleteTodo from "../redux/todos/thunk/deleteTodo";
-import updateColor from "../redux/todos/thunk/updateColor";
-import updateStatus from "../redux/todos/thunk/updateStatus";
-import updateText from "../redux/todos/thunk/updateText";
+import {
+  useDeleteTodoMutation,
+  useEditTodoMutation,
+} from "../features/api/apiSlice";
 
 export default function Todo({ todo, isCompleted }) {
+  const [editTodo] = useEditTodoMutation();
+  const [deleteTodo] = useDeleteTodoMutation();
   const { text, id, completed, color } = todo;
 
   const [isEdit, setIsEdit] = useState(false);
-  const [newText, setNewText] = useState("");
-  useEffect(() => {
-    setNewText(text);
-  }, []);
-
-  const dispatch = useDispatch();
-
-  const handleStatusChange = (todoId) => {
-    dispatch(updateStatus(todoId, completed));
-  };
-
-  const handleColorChange = (todoId, color) => {
-    dispatch(updateColor(todoId, color));
-  };
-
-  const handleDelete = (todoId) => {
-    dispatch(deleteTodo(todoId));
-  };
-  const handleEdit = (e) => {
-    e.preventDefault();
-    dispatch(updateText(id, newText));
-    setIsEdit(false);
-  };
+  const [newText, setNewText] = useState(text);
 
   return (
     <div className="flex justify-start items-center p-2 hover:bg-gray-100 hover:transition-all space-x-4 border-b border-gray-400/20 last:border-0">
@@ -44,7 +23,7 @@ export default function Todo({ todo, isCompleted }) {
         <input
           type="checkbox"
           checked={completed}
-          onChange={() => handleStatusChange(id)}
+          onChange={() => editTodo({ id, data: { completed: !completed } })}
           className="opacity-0 absolute rounded-full"
         />
         {completed && (
@@ -60,7 +39,11 @@ export default function Todo({ todo, isCompleted }) {
       {isEdit ? (
         <form
           className={`select-none flex-1 ${completed && "line-through"}`}
-          onSubmit={handleEdit}
+          onSubmit={(e) => {
+            e.preventDefault();
+            editTodo({ id, data: { text: newText } });
+            setIsEdit(false);
+          }}
         >
           <input
             type="text"
@@ -111,21 +94,21 @@ export default function Todo({ todo, isCompleted }) {
             className={`flex-shrink-0 h-4 w-4 rounded-full border-2 ml-auto cursor-pointer hover:bg-green-500 border-green-500 ${
               color === "green" && "bg-green-500"
             }`}
-            onClick={() => handleColorChange(id, "green")}
+            onClick={() => editTodo({ id, data: { color: "green" } })}
           ></div>
 
           <div
             className={`flex-shrink-0 h-4 w-4 rounded-full border-2 ml-auto cursor-pointer hover:bg-yellow-500 border-yellow-500 ${
               color === "yellow" && "bg-yellow-500"
             }`}
-            onClick={() => handleColorChange(id, "yellow")}
+            onClick={() => editTodo({ id, data: { color: "yellow" } })}
           ></div>
 
           <div
             className={`flex-shrink-0 h-4 w-4 rounded-full border-2 ml-auto cursor-pointer hover:bg-red-500 border-red-500 ${
               color === "red" && "bg-red-500"
             }`}
-            onClick={() => handleColorChange(id, "red")}
+            onClick={() => editTodo({ id, data: { color: "red" } })}
           ></div>
         </>
       )}
@@ -134,7 +117,7 @@ export default function Todo({ todo, isCompleted }) {
         src={cancelImage}
         className="flex-shrink-0 w-4 h-4 ml-2 cursor-pointer"
         alt="Cancel"
-        onClick={() => handleDelete(id)}
+        onClick={() => deleteTodo(id)}
       />
     </div>
   );

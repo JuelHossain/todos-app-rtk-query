@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
 import noteImage from "../assets/images/notes.png";
 import plusImage from "../assets/images/plus.png";
-import addTodo from "../redux/todos/thunk/addTodo";
+import { useAddTodoMutation } from "../features/api/apiSlice";
 
 export default function Header() {
-  const dispatch = useDispatch();
   const [input, setInput] = useState("");
+
+  const [addTodo] = useAddTodoMutation();
 
   const handleInput = (e) => {
     setInput(e.target.value);
@@ -15,7 +15,7 @@ export default function Header() {
   const submitHandler = (e) => {
     e.preventDefault();
     if (input !== "") {
-      dispatch(addTodo(input));
+      addTodo(input);
       setInput("");
     }
   };

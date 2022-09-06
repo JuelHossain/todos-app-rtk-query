@@ -1,64 +1,19 @@
-const { createSlice } = require("@reduxjs/toolkit");
-
-const initialState = {
-  tags: [],
-  search: "",
-  searchRef: null,
-  author: "",
-  pageRequired: true,
-  page: 1,
-  limit: 4,
-};
+import { createSlice } from "@reduxjs/toolkit";
 
 const filterSlice = createSlice({
-  name: "video",
-  initialState,
+  name: "filter",
+  initialState: {
+    colors: [],
+  },
   reducers: {
-    tagSelected: (state, action) => {
-      state.tags.push(action.payload);
+    addColor: (state, action) => {
+      state.colors.push(action.payload);
     },
-    tagRemoved: (state, action) => {
-      const indexToRemove = state.tags.indexOf(action.payload);
-
-      if (indexToRemove !== -1) {
-        state.tags.splice(indexToRemove, 1);
-      }
-    },
-    searched: (state, action) => {
-      state.search = action.payload;
-    },
-    setPage: (state, action) => {
-      state.page = action.payload;
-    },
-    setLimit: (state, action) => {
-      state.limit = action.payload;
-    },
-    setAuthor: (state, action) => {
-      state.author = action.payload;
-    },
-    setPageRequired: (state, action) => {
-      state.pageRequired = action.payload;
-    },
-    reset: (state, action) => {
-      state.tags = [];
-      state.search = "";
-      state.author = "";
-    },
-    setSearchRef: (state, action) => {
-      state.searchRef = action.payload;
+    removeColor: (state, action) => {
+      state.colors = state.colors.filter((color) => color !== action.payload);
     },
   },
 });
 
-export default filterSlice.reducer;
-export const {
-  tagSelected,
-  tagRemoved,
-  searched,
-  setPage,
-  setLimit,
-  setAuthor,
-  setPageRequired,
-  reset,
-  setSearchRef,
-} = filterSlice.actions;
+export const filterReducer = filterSlice.reducer;
+export const { addColor, removeColor } = filterSlice.actions;
