@@ -8,13 +8,19 @@ export const apiSlice = createApi({
   }),
   endpoints: ({ query, mutation }) => ({
     getTodos: query({
-      query: ({ completed } = {}) => {
+      query: ({ status, colors } = {}) => {
         let query = "";
 
-        if (typeof completed === "boolean") {
-          query = `?completed_like=${completed}&`;
+        if (status === "Completed") {
+          query += `completed_like=true&`;
+        } else if (status === "Incompleted") {
+          query += `completed_like=false&`;
         }
-        return `todos${query}`;
+        if (colors?.length > 0) {
+          query += colors.map((color) => `color_like=${color}`).join("&");
+        }
+
+        return query ? `todos?${query}` : "todos";
       },
       providesTags: ["todos"],
     }),
